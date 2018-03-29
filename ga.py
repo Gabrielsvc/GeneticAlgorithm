@@ -18,10 +18,20 @@ def fc(pop,individuo,matrix): # Funcaoo de Custo de cada individuo
 
 
 def init_pop(): #Iniciando uma populacao
+	
+	#sorteando 5 numeros aleatorios diferentes de 0-5 (visita os vertices)
 	pop_t = random.sample(range(0, 5), 5)
+	
+	#sortea mais 9 (tamamnho da pop)
 	for x in range(9):
+
+		#sorteia mais 5 os vertices
 		individuo = random.sample(range(0, 5), 5)
+		
+		#numpy biblioteca utilizada, objetivo concatenar
 		pop_t = numpy.r_[pop_t,individuo]
+	
+	#ate o return passamos de representação vetorial para matricial
 	pop = numpy.zeros((10,5))
 	for x in range(tam_pop):
 		for y in range(5):
@@ -33,23 +43,34 @@ def selecao(pop,matrix):
 	#roleta
 	summ = 0.
 	c_ind = numpy.zeros((10))
+	
+	#Preparacao das porcentagens de cada individuo, para sorteio da roleta
+	
 	for i in range(10):
 		c_ind[i] = 1./fc(pop,i,matrix)
 		summ += 1./fc(pop,i,matrix)
-	print('soma '+str(summ))
 	p_tot = 0
 	for i in range(10):
-		print(c_ind[i])
 		c_ind[i] = ((100* c_ind[i])/summ)
 		p_tot+= c_ind[i]
-	print(c_ind[0])
-	print(p_tot)
+		c_ind[i] = format(c_ind[i], '.2f')
+	p_tot = format(p_tot,'.2f')
+	
+	#Sorteio da roleta
+
+	lucas = random.randint(0,100) # os caras aqui sao frescos, dsclp
+	i=0
+	while((lucas-c_ind[i])>0):
+		lucas -= c_ind[i]
+		i+=1
+	
+	return i
+
+
 if __name__ == '__main__':
 	#Representacao matricial do grafo(matriz(x,y) onde x e y sao vertices do grafo)
 	matrix = numpy.matrix = ([[-1,2,9,3,5],[2,-1,4,3,8],[9,4,-1,7,3],[3,3,7,-1,3],[5,8,3,3,-1]])
 	pop = init_pop()
-	print(pop[0])
-	print('custo' + str(fc(pop,0,matrix)))
 	selecao(pop,matrix)
 	#selecao
 	#Cruzamento
