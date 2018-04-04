@@ -94,7 +94,7 @@ def cruzamento(selecionados,populacao):
 			new_populacao.append(filho2)
 			filho2 = []
 			filho = []
-#Calcula custos
+#Calcula custos MUDAR A PARTIR DAQUI
 def calcula_custos(populacao):
 	custos = []
 	for i in populacao:
