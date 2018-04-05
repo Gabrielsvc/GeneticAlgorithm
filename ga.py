@@ -97,33 +97,39 @@ def cruzamento(selecionados,populacao):
 			new_populacao.append(filho2)
 			filho2 = []
 			filho = []
-#Calcula custos MUDAR A PARTIR DAQUI
+#Calcula custos 
 def calcula_custos(populacao):
 	custos = []
+	j = 0
 	for i in populacao:
-		custos.append(funcaodecusto(populacao, numpy.where(i == populacao), matrix))
+		custos.append(funcaodecusto(populacao,j , matrix))
+		j += 1
+	j = 0
 	return custos
 #Atualiza populacao
 #Criar tupla, individuo custo e ordenar por custo
 def atualizacao(new_populacao,populacao):
-	custos_populacao = calcula_custos(populacao)
-	custos_nova_populacao = calcula_custos(new_populacao)
-	i = 0  
-	populacao_f = []
-	populacao_f.append(populacao[populacao.index(min(custos_populacao))])
-	populacao.pop(index(min(custos_populacao)))
-	populacao_f.append(populacao[populacao.index(min(custos_populacao))])
-	populacao.pop(index(min(custos_populacao)))
-	while (len(populacao_f) < 10) :
-		populacao_f.append(new_populacao[new_populacao.index(min(custos_nova_populacao))])
-		new_populacao.pop(index(min(custos_nova_populacao)))
-	return populacao_f
+	custos_populacao = list(calcula_custos(populacao))
+	custos_nova_populacao = list(calcula_custos(new_populacao))
+	melhorind1 = custos_populacao.index(min(custos_populacao))
+	melhorindividuo1 = populacao[melhorind1]
+	populacaof = []
+	populacaof.append(populacao[melhorindividuo1])
+	del custos_populacao[melhorind1]
+	populacaosemmelhor = numpy.delete(populacao,melhorind1,0)
+	melhorind2 = custos_populacao.index(min(custos_populacao))	
+	melhorindividuo2 = populacao[melhorind2]
+	populacaof.append(populacao[melhorindividuo2])
+	del custos_populacao[melhorind2]
 	
+	
+	
+	
+
 if __name__ == '__main__':
 	#Representacao matricial do grafo(matriz(x,y) onde x e y sao vertices do grafo)
 	matrix = numpy.matrix = ([[-1,2,9,3,5],[2,-1,4,3,8],[9,4,-1,7,3],[3,3,7,-1,3],[5,8,3,3,-1]])
 	#inicio
-	numpy.where()
 	iteracoes = 0 
 	populacao = init_populacao()
 	while(iteracoes < 50):
@@ -137,4 +143,3 @@ if __name__ == '__main__':
 		populacao = atualizacao(new_populacao,populacao)
 		iteracoes += 1
 	custos = calcula_custos(populacao)
-	print('solucao: ' + populacao[populacao.index(min(custos))])
