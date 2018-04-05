@@ -78,30 +78,33 @@ def cruzamento(selecionados,populacao):
 	new_populacao = []
 	filho = []
 	filho2 = []
-	cruzamento = random.uniform(0,1)
-	if(cruzamento < tx_c):
-		while(len(new_populacao) < 12):
-			pai1,pai2 = random.sample(selecionados,2)
-			pai1 = populacao[pai1]
-			pai2 = populacao[pai2]
-			pais = intercalarlista(pai1,pai2)
-			for i in pais:
-				if(i in filho):
-					filho2.append(i)
-				else:
-					filho.append(i) 	
-			filho1 = mutacao(filho)
-			filho2 = mutacao(filho2)
-			
-			new_populacao.append(filho)
-			new_populacao.append(filho2)
-			filho2 = []
-			filho = []
+	k = 0
+	while k < tam_populacao:
+		cruzamento = random.uniform(0,1)
+		if(cruzamento <= tx_c):
+			while(len(new_populacao) < 10):
+				pai1,pai2 = random.sample(selecionados,2)
+				pai1 = populacao[pai1]
+				pai2 = populacao[pai2]
+				pais = intercalarlista(pai1,pai2)
+				for i in pais:
+					if(i in filho):
+						filho2.append(i)
+					else:
+						filho.append(i) 	
+				filho1 = mutacao(filho)
+				filho2 = mutacao(filho2)
+				k += 2 		
+				new_populacao.append(filho)
+				new_populacao.append(filho2)				
+				filho2 = []
+				filho = []
+	return new_populacao
 #Calcula custos 
 def calcula_custos(populacao):
 	custos = []
 	j = 0
-	for i in populacao:
+	while j < tam_populacao:
 		custos.append(funcaodecusto(populacao,j , matrix))
 		j += 1
 	j = 0
@@ -109,37 +112,50 @@ def calcula_custos(populacao):
 #Atualiza populacao
 #Criar tupla, individuo custo e ordenar por custo
 def atualizacao(new_populacao,populacao):
+	populacaof = []
 	custos_populacao = list(calcula_custos(populacao))
 	custos_nova_populacao = list(calcula_custos(new_populacao))
+	#------------ Selecionando a elite da velha populacao
 	melhorind1 = custos_populacao.index(min(custos_populacao))
 	melhorindividuo1 = populacao[melhorind1]
-	populacaof = []
-	populacaof.append(populacao[melhorindividuo1])
+	populacaof.append(list(melhorindividuo1))
 	del custos_populacao[melhorind1]
+	#------------- 
 	populacaosemmelhor = numpy.delete(populacao,melhorind1,0)
 	melhorind2 = custos_populacao.index(min(custos_populacao))	
 	melhorindividuo2 = populacao[melhorind2]
-	populacaof.append(populacao[melhorindividuo2])
+	populacaof.append(list(melhorindividuo2))
 	del custos_populacao[melhorind2]
-	
-	
-	
-	
+	#---------------- Selecionando os melhores individuos da nova populacao
+	custos_indices = zip(new_populacao,custos_nova_populacao)
+	custos_indices = sorted(custos_indices,key = lambda tup: tup[1])
+	for j in custos_indices:
+		if(len(populacaof) == 10):
+			break
+		populacaof.append(list(j[0]))
+	return populacaof
 
 if __name__ == '__main__':
 	#Representacao matricial do grafo(matriz(x,y) onde x e y sao vertices do grafo)
 	matrix = numpy.matrix = ([[-1,2,9,3,5],[2,-1,4,3,8],[9,4,-1,7,3],[3,3,7,-1,3],[5,8,3,3,-1]])
 	#inicio
+	solucao = []
 	iteracoes = 0 
 	populacao = init_populacao()
-	while(iteracoes < 50):
+	while(iteracoes < 500):
 		#Adaptacao
 		custos = calcula_custos(populacao)
 		#selecao
 		selecao(populacao,matrix)
 		#Cruzamento
-		cruzamento(selecionados,populacao)
+		new_populacao = cruzamento(selecionados,populacao)
 		#Atualizacao
 		populacao = atualizacao(new_populacao,populacao)
 		iteracoes += 1
 	custos = calcula_custos(populacao)
+	embelezando_solucao = populacao[custos.index(min(custos))]
+	for i in embelezando_solucao:
+		i = int(i+1)
+		solucao.append(i)
+
+	print("solucao: " + str(solucao) + " , custando: " + str(custos[custos.index(min(custos))]))
